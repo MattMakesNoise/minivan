@@ -1,0 +1,21 @@
+/*
+Theme Name: Minivan
+Author: Matt Jones
+Version: 0.1
+Description: A tiny classic theme in vanilla PHP/CSS/JS.
+Text Domain: minivan
+*/
+:root {
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --max: 760px;
+  --gap: 1rem;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font); line-height: 1.6; }
+.wrapper { max-width: var(--max); margin: 0 auto; padding: 0 var(--gap) 3rem; }
+.site-header, .site-footer { border-top: 1px solid #eee; border-bottom: 1px solid #eee; background:#fafafa; }
+.site-header a { text-decoration: none; color: inherit; }
+nav a { margin-right: .75rem; }
+.post-title { margin: 0 0 .25rem; }
+.meta { color:#666; font-size:.9rem; margin-bottom:1rem; }
+img { max-width: 100%; height: auto; }
