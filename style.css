@@ -5,17 +5,283 @@ Version: 0.1
 Description: A tiny classic theme in vanilla PHP/CSS/JS.
 Text Domain: minivan
 */
+
+/**
+ * Base CSS variables.
+ */
 :root {
-  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  --max: 760px;
-  --gap: 1rem;
+    --bg: #FCFCFC;
+    --bg-alt: #F7F7F7;
+    --text: #0F0F0F;
+    --primary: #2FB279;
+    --secondary: #F5E13B;
+    --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    --max: 760px;
+    --gap: 1rem;
+    --bord-rad: 10px;
+    --shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 }
-* { box-sizing: border-box; }
-body { margin: 0; font-family: var(--font); line-height: 1.6; }
-.wrapper { max-width: var(--max); margin: 0 auto; padding: 0 var(--gap) 3rem; }
-.site-header, .site-footer { border-top: 1px solid #eee; border-bottom: 1px solid #eee; background:#fafafa; }
-.site-header a { text-decoration: none; color: inherit; }
-nav a { margin-right: .75rem; }
-.post-title { margin: 0 0 .25rem; }
-.meta { color:#666; font-size:.9rem; margin-bottom:1rem; }
-img { max-width: 100%; height: auto; }
+
+:root:has(#dark:checked) {
+    --bg: #252627;
+    --bg-alt: #0F0F0F;
+    --text: #FCFCFC;
+    --primary: #F5E13B;
+    --secondary: #F5E13B;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #FCFCFC;
+    --bg-alt: #F7F7F7;
+    --text: #0F0F0F;
+    --primary: #2FB279;
+    --secondary: #F5E13B;
+  }
+  :root:has(#dark:checked) {
+    --bg: #252627;
+    --bg-alt: #0F0F0F;
+    --text: #FCFCFC;
+    --primary: #F5E13B;
+    --secondary: #F5E13B;
+  }
+}
+
+/**
+ * CSS Reset and base styles.
+ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font);
+    line-height: 1.6;
+    background: var(--bg);
+    color: var(--text);
+}
+
+body:has(#dark:checked) {
+    background: var(--bg);
+    color: var(--text);
+}
+
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+blockquote,
+dl,
+dd {
+    margin: 0;
+    padding: 0;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: .5rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+/* ---- A11y helper ---- */
+.visually-hidden {
+    position: absolute !important;
+    height: 1px; width: 1px;
+    overflow: hidden; clip: rect(1px,1px,1px,1px);
+    white-space: nowrap;
+}
+
+/**
+ * Utility and layout styles.
+ */
+.d-flex {
+    display: flex;
+}
+.d-block {
+  display: block;
+}
+.flex-row {
+  flex-direction: row;
+}
+.flex-col {
+  flex-direction: column;
+}
+.justify-center {
+    justify-content: center;
+}
+.justify-between {
+    justify-content: space-between;
+}
+.justify-around {
+    justify-content: space-around;
+}
+.justify-evenly {
+    justify-content: space-evenly;
+}
+.items-start {
+  align-items: flex-start;
+}
+.items-center {
+  align-items: center;
+}
+.items-end {
+  align-items: flex-end;
+}
+
+/* ---- Toggle layout ---- */
+.site-header .wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--gap);
+}
+
+.site-title {
+    margin-right: auto;
+}
+
+/* ---- Pretty switch ---- */
+.theme-toggle {
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-track {
+    --h: 32px;
+    --w: 56px;
+    position: relative;
+    width: var(--w);
+    height: var(--h);
+    background: #ccc;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 6px;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 2px color-mix(in oklab, #000 10%, transparent);
+    transition: background .25s ease;
+}
+
+/* The rolling ball */
+.toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: calc(var(--h) - 6px);
+    height: calc(var(--h) - 6px);
+    border-radius: 50%;
+    background: var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), background .25s;
+    will-change: transform;
+}
+
+/* Icons change with theme vars */
+.toggle-icons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 0.9rem;
+    color: var(--text); /* light text on dark, dark text on light */
+    opacity: .8;
+}
+
+/* Keyboard focus */
+#dark:focus-visible + .theme-toggle .toggle-track,
+#dark:focus + .theme-toggle .toggle-track {
+    outline: 3px solid color-mix(in oklab, var(--text), transparent 60%);
+    outline-offset: 2px;
+}
+
+/* Move the ball when checked */
+#dark:checked + .theme-toggle .toggle-thumb {
+    transform: translateX(calc(var(--w) - var(--h)));
+}
+
+/* Subtle track color shift when checked */
+/* #dark:checked + .theme-toggle .toggle-track {
+  background: color-mix(in oklab, var(--fg), var(--bg) 70%);
+} */
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .toggle-thumb, .toggle-track { transition: none; }
+}
+
+.wrapper {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gap) 3rem;
+}
+
+.site-header,
+.site-footer {
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    background: var(--bg-alt);
+}
+
+.site-header a {
+    text-decoration: none;
+    color: inherit;
+}
+
+nav a {
+    margin-right: .75rem;
+}
+
+.post-title {
+    margin: 0 0 .25rem;
+}
+
+.meta {
+    color:#666;
+    font-size:.9rem;
+    margin-bottom:1rem;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
